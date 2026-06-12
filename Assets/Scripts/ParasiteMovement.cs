@@ -4,6 +4,9 @@ public class ParasiteMovement : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed = 5f;
+    public float sneakSpeed = 2f;
+
+    [HideInInspector] public bool isSneaking = false;
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
@@ -19,7 +22,8 @@ public class ParasiteMovement : MonoBehaviour
         moveInput.y = Input.GetAxisRaw("Vertical");
         moveInput.Normalize();
 
-        // Fareye dön
+        isSneaking = Input.GetKey(KeyCode.LeftShift);
+
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = (mousePos - transform.position).normalized;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
@@ -28,6 +32,7 @@ public class ParasiteMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        rb.velocity = moveInput * moveSpeed;
+        float speed = isSneaking ? sneakSpeed : moveSpeed;
+        rb.velocity = moveInput * speed;
     }
 }

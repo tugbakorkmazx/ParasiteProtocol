@@ -4,9 +4,13 @@ public class EnemyBase : MonoBehaviour
 {
     [Header("Detection")]
     public float detectionRadius = 5f;
-    public Transform player;
-
+    protected Transform player;
     protected bool playerDetected = false;
+
+    void Start()
+    {
+        player = GameObject.FindWithTag("Player").transform;
+    }
 
     protected void Update()
     {

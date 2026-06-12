@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class ParasiteController : MonoBehaviour
 {
@@ -31,7 +32,7 @@ public class ParasiteController : MonoBehaviour
             GetComponentInChildren<SpriteRenderer>().enabled = false;
             GetComponent<Rigidbody2D>().simulated = false;
 
-            currentHost.enabled = false;
+            currentHost.isPossessed = true;
             transform.SetParent(currentHost.transform);
             transform.localPosition = Vector3.zero;
 
@@ -48,14 +49,26 @@ void LeavePossess()
     transform.SetParent(null);
     transform.position = currentHost.transform.position + Vector3.up;
 
-    currentHost.enabled = true;
+    currentHost.isPossessed = false;
     currentHost = null;
     isPossessing = false;
 
     GetComponentInChildren<SpriteRenderer>().enabled = true;
     GetComponent<Rigidbody2D>().simulated = true;
 
+    // Parasite halindeyken — 1 can
+    GetComponent<HealthSystem>().currentHealth = 1f;
+
     Debug.Log("Bedenden çıkıldı!");
+
+    StartCoroutine(InvincibilityFrames());
+}
+public HealthSystem GetCurrentHealth()
+{
+    if (isPossessing && currentHost != null)
+        return currentHost.GetComponent<HealthSystem>();
+    else
+        return GetComponent<HealthSystem>();
 }
 
     void OnDrawGizmosSelected()
@@ -63,4 +76,34 @@ void LeavePossess()
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, possessRadius);
     }
+        public void ForceLeavePossess()
+    {
+        LeavePossess();
+    }
+
+    IEnumerator InvincibilityFrames()
+{
+    HealthSystem hs = GetComponent<HealthSystem>();
+    hs.isInvincible = true;
+    // İsteğe bağlı: yanıp sönsün
+    SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
+    for (int i = 0; i < 6; i++)
+    {
+        sr.enabled = !sr.enabled;
+        yield return new WaitForSeconds(0.15f);
+    }
+    sr.enabled = true;
+    hs.isInvincible = false;
+}
+
+    public bool IsHostValid()
+    {
+        return isPossessing && currentHost != null;
+    }
+
+    public EnemyPatrol GetHost()
+    {
+        return currentHost;
+    }
+
 }
