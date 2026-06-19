@@ -7,6 +7,10 @@ public class Room : MonoBehaviour
     public List<Transform> enemySpawnPoints = new List<Transform>();
     public Transform playerSpawnPoint;
 
+    [Header("Oda Sınırları")]
+    public Vector2 roomMin = new Vector2(-4.5f, -4.5f);
+    public Vector2 roomMax = new Vector2(4.5f, 4.5f);
+
     [HideInInspector] public List<GameObject> spawnedEnemies = new List<GameObject>();
 
     public void SpawnEnemies(GameObject enemyPrefab)
@@ -23,5 +27,12 @@ public class Room : MonoBehaviour
         spawnedEnemies.RemoveAll(e => e == null);
         if (spawnedEnemies.Count == 0)
             isCleared = true;
+    }
+
+    public Vector3 ClampToRoom(Vector3 pos)
+    {
+        pos.x = Mathf.Clamp(pos.x, roomMin.x, roomMax.x);
+        pos.y = Mathf.Clamp(pos.y, roomMin.y, roomMax.y);
+        return pos;
     }
 }

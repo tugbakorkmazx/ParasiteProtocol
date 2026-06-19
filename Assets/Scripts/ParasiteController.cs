@@ -3,20 +3,35 @@ using System.Collections;
 
 public class ParasiteController : MonoBehaviour
 {
-    public float possessRadius = 1.5f;
-    private EnemyPatrol currentHost = null;
-    private bool isPossessing = false;
+   public float possessRadius = 1.5f;
+public float possessCooldown = 0.5f;
+private float lastActionTime = -10f;
+private EnemyPatrol currentHost = null;
+private bool isPossessing = false;
 
-    void Update()
+void Update()
+{
+    if (Input.GetKeyDown(KeyCode.E))
     {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            if (!isPossessing)
-                TryPossess();
-            else
-                LeavePossess();
-        }
+        TryToggle();
     }
+}
+
+public void TryPossessButton()
+{
+    TryToggle();
+}
+
+void TryToggle()
+{
+    if (Time.time < lastActionTime + possessCooldown) return;
+    lastActionTime = Time.time;
+
+    if (!isPossessing)
+        TryPossess();
+    else
+        LeavePossess();
+}
 
     void TryPossess()
 {
@@ -47,7 +62,12 @@ void LeavePossess()
     if (currentHost == null) return;
 
     transform.SetParent(null);
-    transform.position = currentHost.transform.position + Vector3.up;
+
+    Vector3 exitPos = currentHost.transform.position + Vector3.up;
+    Room room = FindObjectOfType<Room>();
+    if (room != null)
+        exitPos = room.ClampToRoom(exitPos);
+    transform.position = exitPos;
 
     currentHost.isPossessed = false;
     currentHost = null;
@@ -56,13 +76,13 @@ void LeavePossess()
     GetComponentInChildren<SpriteRenderer>().enabled = true;
     GetComponent<Rigidbody2D>().simulated = true;
 
-    // Parasite halindeyken — 1 can
     GetComponent<HealthSystem>().currentHealth = 1f;
 
     Debug.Log("Bedenden çıkıldı!");
 
     StartCoroutine(InvincibilityFrames());
 }
+
 public HealthSystem GetCurrentHealth()
 {
     if (isPossessing && currentHost != null)

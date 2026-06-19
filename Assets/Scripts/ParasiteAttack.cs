@@ -13,13 +13,15 @@ public class ParasiteAttack : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && Time.time >= lastAttackTime + attackCooldown)
         {
-            Attack();
-            lastAttackTime = Time.time;
+            TryAttack();
         }
     }
 
-    void Attack()
+    public void TryAttack()
     {
+        if (Time.time < lastAttackTime + attackCooldown) return;
+        lastAttackTime = Time.time;
+
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, attackRadius);
         foreach (var hit in hits)
         {

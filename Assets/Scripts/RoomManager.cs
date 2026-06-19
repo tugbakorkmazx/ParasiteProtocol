@@ -21,12 +21,6 @@ public class RoomManager : MonoBehaviour
         if (currentRoom == null) return;
 
         currentRoom.CheckCleared();
-
-        if (currentRoom.isCleared && Input.GetKeyDown(KeyCode.F))
-        {
-            roomIndex++;
-            LoadRoom(roomIndex % roomPrefabs.Length);
-        }
     }
 
     void LoadRoom(int index)
@@ -49,5 +43,11 @@ public class RoomManager : MonoBehaviour
         currentRoom.SpawnEnemies(enemyPrefab);
 
         Debug.Log("Oda yüklendi: " + index);
+    }
+
+            public void NextRoom()
+    {
+        roomIndex++;
+        LoadRoom(roomIndex % roomPrefabs.Length);
     }
 }

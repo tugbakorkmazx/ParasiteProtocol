@@ -21,16 +21,23 @@ public class EnemyPatrol : EnemyBase
     new void Update()
     {
         if (isPossessed)
-        {
-            Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
-            rb.velocity = input * chaseSpeed;
+{
+    Vector2 input;
+    ParasiteMovement pm = GameObject.FindWithTag("Player").GetComponent<ParasiteMovement>();
+    if (pm != null && pm.joystick != null && pm.joystick.Direction.magnitude > 0.1f)
+        input = pm.joystick.Direction;
+    else
+        input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
 
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 dir = (mousePos - transform.position).normalized;
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
-            transform.rotation = Quaternion.Euler(0, 0, angle);
-            return;
-        }
+    rb.velocity = input * chaseSpeed;
+
+    if (input.magnitude > 0.1f)
+    {
+        float angle = Mathf.Atan2(input.y, input.x) * Mathf.Rad2Deg - 90f;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
+    }
+    return;
+}
 
         base.Update();
 
