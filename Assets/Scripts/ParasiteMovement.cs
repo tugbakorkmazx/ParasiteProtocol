@@ -11,16 +11,18 @@ public class ParasiteMovement : MonoBehaviour
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
+    private SpriteRenderer sr;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        sr = GetComponentInChildren<SpriteRenderer>();
     }
 
     void Update()
     {
         if (Input.GetKey(KeyCode.LeftShift)) isSneaking = true;
-        
+
         if (joystick != null && joystick.Direction.magnitude > 0.1f)
             moveInput = joystick.Direction;
         else
@@ -29,11 +31,9 @@ public class ParasiteMovement : MonoBehaviour
             moveInput.y = Input.GetAxisRaw("Vertical");
             moveInput.Normalize();
         }
-        if (moveInput.magnitude > 0.1f)
-        {
-            float angle = Mathf.Atan2(moveInput.y, moveInput.x) * Mathf.Rad2Deg - 90f;
-            transform.rotation = Quaternion.Euler(0, 0, angle);
-        }
+
+        if (moveInput.x > 0.1f) sr.flipX = false;
+        else if (moveInput.x < -0.1f) sr.flipX = true;
     }
 
     void FixedUpdate()
@@ -42,7 +42,7 @@ public class ParasiteMovement : MonoBehaviour
         rb.velocity = moveInput * speed;
     }
 
-        public void SetSneak(bool value)
+    public void SetSneak(bool value)
     {
         isSneaking = value;
     }
