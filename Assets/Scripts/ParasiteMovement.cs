@@ -12,11 +12,13 @@ public class ParasiteMovement : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 moveInput;
     private SpriteRenderer sr;
+    private Animator anim;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponentInChildren<SpriteRenderer>();
+        anim = GetComponentInChildren<Animator>();
     }
 
     void Update()
@@ -34,6 +36,9 @@ public class ParasiteMovement : MonoBehaviour
 
         if (moveInput.x > 0.1f) sr.flipX = false;
         else if (moveInput.x < -0.1f) sr.flipX = true;
+
+        if (anim != null)
+            anim.SetFloat("Speed", moveInput.magnitude);
     }
 
     void FixedUpdate()
